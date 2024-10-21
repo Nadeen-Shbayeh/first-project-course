@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Product from "../models/poduct.model.js";
+
 
 export const getproducts = async(req,res)=>{
     try {
@@ -8,7 +10,7 @@ export const getproducts = async(req,res)=>{
         console.log("error in fetching products:",error.massage)
         res.status(500).json({success:true,massage:"Server error"})
     }
-}
+};
 
 export const createproduct = async (req,res) => {
     const product = req.body;
@@ -26,7 +28,7 @@ export const createproduct = async (req,res) => {
 
     }
     
-}
+};
 
 export const updateproduct = async (req,res)=>{
     const { id } = req.params;
@@ -42,17 +44,20 @@ export const updateproduct = async (req,res)=>{
         res.status(500).json({success:false,massage:"Server Error"})
         
     }
-}
+};
 
 export const deleteproduct = async (req,res)=>{
     const { id } = req.params;
-    console.log("id:",id);
+    
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({success:false,massage:"Invalid Product Id"});
+    }
     try {
         await Product.findByIdAndDelete(id);
         res.status(200).json({success:true,massage:"Product deleted"});
     } catch (error) {
         console.log("error in deleting product:",error.massage);
-        res.status(404).json({success:false,massage:"Product not found"})
+        res.status(500).json({success:false,massage:"Server Error"})
         
     }
-}
+};
